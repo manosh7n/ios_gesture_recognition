@@ -1,0 +1,24 @@
+diff --git a/tensorflow/lite/experimental/ios/BUILD.apple b/tensorflow/lite/experimental/ios/BUILD
+similarity index 100%
+rename from tensorflow/lite/experimental/ios/BUILD.apple
+rename to tensorflow/lite/experimental/ios/BUILD
+diff --git a/tensorflow/lite/experimental/objc/BUILD.apple b/tensorflow/lite/experimental/objc/BUILD
+similarity index 100%
+rename from tensorflow/lite/experimental/objc/BUILD.apple
+rename to tensorflow/lite/experimental/objc/BUILD
+diff --git a/tensorflow/lite/experimental/swift/BUILD.apple b/tensorflow/lite/experimental/swift/BUILD
+similarity index 98%
+rename from tensorflow/lite/experimental/swift/BUILD.apple
+rename to tensorflow/lite/experimental/swift/BUILD
+index 28b3c76e52c..d3b3fdd238a 100644
+--- a/tensorflow/lite/experimental/swift/BUILD.apple
++++ b/tensorflow/lite/experimental/swift/BUILD
+@@ -57,7 +57,7 @@ swift_library(
+     }),
+     module_name = "TensorFlowLite",
+     tags = TFL_DEFAULT_TAGS + ["nobuilder"],
+-    visibility = ios_visibility_whitelist(),
++    visibility = ["//visibility:public"],
+     deps = [
+         "//tensorflow/lite/experimental/ios:tensorflow_lite_c",
+     ] + select({
