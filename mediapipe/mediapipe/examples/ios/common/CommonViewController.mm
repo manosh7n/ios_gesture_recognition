@@ -102,6 +102,8 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
 // depending on the application navigation flow in that case.
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
+    
+  [self createSwitchButton];
 
   switch (self.sourceMode) {
     case MediaPipeDemoSourceVideo: {
@@ -145,6 +147,19 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
       break;
     }
   }
+}
+
+- (void)createSwitchButton {
+    UIButton* button = [[UIButton alloc] init];
+    [button addTarget:self action:@selector(switchCam) forControlEvents:UIControlEventTouchUpInside];
+    [button setImage:[UIImage systemImageNamed:@"camera.rotate"] forState:UIControlStateNormal];
+    button.frame = CGRectMake(self.view.frame.size.width/2 + 60, 470, 100, 100);
+    [self.view addSubview:button];
+}
+
+- (void)switchCam {
+    self.cameraSource.cameraPosition = self.cameraSource.cameraPosition == AVCaptureDevicePositionBack ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
+    _cameraSource.videoMirrored = !_cameraSource.videoMirrored;
 }
 
 - (void)startGraphAndCamera {
