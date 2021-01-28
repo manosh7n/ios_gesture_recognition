@@ -91,14 +91,3 @@ swift_library(
     ]
 )
 
-load("@build_bazel_rules_apple//apple:ios.bzl", "ios_static_framework")
-ios_static_framework(
-  name = "MyiOSApp",
-  deps = [":HandTrackingGpuAppLibrary"],
-  minimum_os_version = MIN_IOS_VERSION,
-  families = [
-        "iphone",
-        "ipad",
-    ],
-
-)

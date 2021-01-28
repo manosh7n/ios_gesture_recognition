@@ -30,37 +30,10 @@ static const int kNumHands = 2;
     _model = [[ModelHandler alloc] init];
     _data = [[NSMutableArray alloc] init];
     _isRecording = NO;
-    _labels = @[@"Привет", @"Деньги", @"Пока"];
+    _labels = @[@"Привет", @"Деньги", @"Пока", @"Хорошо", @"Мама"];
     
-    // UIButton initialize
-    _button = [UIButton buttonWithType:UIButtonTypeSystem];
-    [_button addTarget:self
-                       action:@selector(recordButtonClicked:)
-                       forControlEvents:UIControlEventTouchUpInside];
-    [_button setTitle:@"Start" forState:UIControlStateNormal];
-    _button.frame = CGRectMake(self.view.frame.size.width/2 - 45, 470, 90, 90);
-//    [_button setExclusiveTouch:YES];
-    _button.layer.cornerRadius = 45;
-    _button.layer.borderColor = [UIColor whiteColor].CGColor;
-    [_button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    _button.layer.borderWidth = 1.0f;
-    [self.view addSubview:_button];
     
-    // Circle predict
-    _circleView = [[UIView alloc] initWithFrame:CGRectMake(10,25,110,35)];
-    _circleView.alpha = 0.65;
-    _circleView.layer.cornerRadius = 15;
-    _circleView.layer.borderColor = [UIColor whiteColor].CGColor;
-    _circleView.layer.borderWidth = 2.0f;
-    [self.view addSubview:_circleView];
-    
-    // UILabel predict
-    _label = [[UILabel alloc]initWithFrame:CGRectMake(20, 27, 110, 30)];
-    _label.text = @"Click start";
-    _label.font = [UIFont fontWithName:@"New York" size:22];
-    _label.textColor = [UIColor whiteColor];
-    [self.view addSubview:_label];
-    
+    [self prepareUI];
     [self.mediapipeGraph setSidePacket:(mediapipe::MakePacket<int>(kNumHands))
                                named:kNumHandsInputSidePacket];
     [self.mediapipeGraph addFrameOutputStream:kLandmarksOutputStream
@@ -101,11 +74,11 @@ static const int kNumHands = 2;
         if ([_data count] > 0 && !self.isRecording) {
             NSData* d = [self prepareData:_data];
             _predictLabel = [_model predict:d];
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"inside dispatch async block main thread from main thread");
+                NSLog(@"Inside dispatch async block main thread from main thread");
                 _label.text =  [self.labels objectAtIndex:self.predictLabel];
             });
-            
             [_data removeAllObjects];
         }
      }
@@ -113,11 +86,13 @@ static const int kNumHands = 2;
 }
 
 - (NSData*)prepareData:(NSMutableArray*) array {
+    int MAX_LEN = 1764;
     int count = [array count];
-    int diff = abs(int(count - 1134)) / 63;
+    int diff = abs(int(count - MAX_LEN)) / 63;
     BOOL front = YES;
-    if (count > 1134) {
-        for(int i = 0; i < diff; i++) {
+    
+    if (count > MAX_LEN) {
+        for (int i = 0; i < diff; i++) {
             if (front) {
                 [array removeObjectsInRange:NSMakeRange(0, 63)];
                 front = NO;
@@ -127,28 +102,30 @@ static const int kNumHands = 2;
             }
         }
     } else {
-        for(int i = 0; i < diff; i++) {
+        for (int i = 0; i < diff; i++) {
             if (front) {
-                for(int j = 0; j < 63; j++) {
+                for (int j = 0; j < 63; j++) {
                     [array insertObject:[NSNumber numberWithFloat:-1.0] atIndex:0];
                 }
                 front = NO;
             } else {
-                for(int j = 0; j < 63; j++) {
+                for (int j = 0; j < 63; j++) {
                     [array insertObject:[NSNumber numberWithFloat:-1.0] atIndex:[array count]];
                 }
                 front = YES;
             }
         }
     }
+    
     NSLog(@"Array len = %i", [array count]);
-//    NSLog(@"%@", array);
-    int num_bytes = sizeof(float) * 1134;
+    int num_bytes = sizeof(float) * MAX_LEN;
     float *arr = (float*)malloc(num_bytes);
-    for (int i = 0; i < 1134; ++i) {
+    
+    for (int i = 0; i < MAX_LEN; ++i) {
       arr[i] = [_data[i] floatValue];
     }
     NSData *d = [NSData dataWithBytesNoCopy:arr length:num_bytes freeWhenDone:YES];
+    
     return d;
 }
 
@@ -163,6 +140,36 @@ static const int kNumHands = 2;
         _label.text = @"Recording...";
         _isRecording = YES;
     }
+}
+
+- (void)prepareUI {
+    // UIButton initialize
+    _button = [UIButton buttonWithType:UIButtonTypeSystem];
+    [_button addTarget:self
+                       action:@selector(recordButtonClicked:)
+                       forControlEvents:UIControlEventTouchUpInside];
+    [_button setTitle:@"Start" forState:UIControlStateNormal];
+    _button.frame = CGRectMake(self.view.frame.size.width/2 - 45, 470, 90, 90);
+    _button.layer.cornerRadius = 45;
+    _button.layer.borderColor = [UIColor whiteColor].CGColor;
+    [_button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    _button.layer.borderWidth = 1.0f;
+    [self.view addSubview:_button];
+    
+    // Circle predict
+    _circleView = [[UIView alloc] initWithFrame:CGRectMake(10,25,110,35)];
+    _circleView.alpha = 0.65;
+    _circleView.layer.cornerRadius = 15;
+    _circleView.layer.borderColor = [UIColor whiteColor].CGColor;
+    _circleView.layer.borderWidth = 2.0f;
+    [self.view addSubview:_circleView];
+    
+    // UILabel predict
+    _label = [[UILabel alloc]initWithFrame:CGRectMake(20, 27, 110, 30)];
+    _label.text = @"Click start";
+    _label.font = [UIFont fontWithName:@"New York" size:22];
+    _label.textColor = [UIColor whiteColor];
+    [self.view addSubview:_label];
 }
 
 @end
