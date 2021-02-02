@@ -153,7 +153,10 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
     UIButton* button = [[UIButton alloc] init];
     [button addTarget:self action:@selector(switchCam) forControlEvents:UIControlEventTouchUpInside];
     [button setImage:[UIImage systemImageNamed:@"camera.rotate"] forState:UIControlStateNormal];
-    button.frame = CGRectMake(self.view.frame.size.width/2 + 60, 470, 100, 100);
+    button.frame = CGRectMake(self.view.frame.size.width/2 + 90, 500, 35, 25);
+    button.tintColor = [UIColor whiteColor];
+    button.contentVerticalAlignment = UIControlContentVerticalAlignmentFill;
+    button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
     [self.view addSubview:button];
 }
 
