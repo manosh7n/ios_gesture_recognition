@@ -1,0 +1,10 @@
+{
+  "optionSet" : {
+    "BazelPath" : {
+      "p" : "/Users/dmitry/.bazel/bin/bazel"
+    },
+    "WorkspaceRootPath" : {
+      "p" : "/Users/dmitry/Documents/mediapipeNew/mediapipe"
+    }
+  }
+}
